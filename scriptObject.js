@@ -145,4 +145,24 @@ function Checkbox() {
   ).render();
 }
 
-document.body.append(Counter(), CounterRed(), Checkbox());
+function TipTap() {
+  const counter = new State(0);
+
+  return new LafElement(
+    "div",
+    { class: "tiptap" },
+    new LafElement(
+      "button",
+      { onClick: () => counter.set(counter.get() - 1) },
+      "-",
+    ),
+    new LafElement("div", {}, counter),
+    new LafElement(
+      "button",
+      { onClick: () => counter.set(counter.get() + 1) },
+      "+",
+    ),
+  ).render();
+}
+
+document.body.append(Counter(), CounterRed(), Checkbox(), TipTap());
