@@ -37,7 +37,7 @@ class Reducer extends State {
 
   // @Override
   set = () => {
-    throw new Error("use dispatch on Reducer");
+    throw new Error("use dispatch on Reducer, not the set method");
   };
 }
 
@@ -67,6 +67,7 @@ class LafElement {
   }
 
   static #reader(v) {
+    if (v instanceof LafElement) return v;
     if (v instanceof State) return () => v.get();
     if (typeof v === "function") return v;
     return null;
@@ -129,4 +130,19 @@ function CounterRed() {
   ).render();
 }
 
-document.body.append(Counter(), CounterRed());
+function Checkbox() {
+  const state = new Reducer((v) => !v, false);
+
+  return new LafElement(
+    "label",
+    {},
+    new LafElement("input", {
+      type: "checkbox",
+      checked: state,
+      onChange: () => state.dispatch(),
+    }),
+    () => (state.get() ? "checked" : "unchecked"),
+  ).render();
+}
+
+document.body.append(Counter(), CounterRed(), Checkbox());
