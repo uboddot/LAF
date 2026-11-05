@@ -54,10 +54,16 @@ class Reducer extends State {
 
 class Effect {
   #debs = new Set();
+  #children = new Set();
 
   constructor(effect) {
     this.effect = effect;
+    effectStack.at(-1)?.addChild(this);
     this.#run();
+  }
+
+  addChild(effect) {
+    this.#children.add(this);
   }
 
   notify = () => this.#run();
@@ -66,9 +72,15 @@ class Effect {
     this.#debs.add(state);
   }
 
-  #run() {
+  dispose() {
+    this.#children.forEach((child) => child.dispose());
+    this.#children.clear();
     this.#debs.forEach((state) => state.unsubscribe(this));
     this.#debs.clear();
+  }
+
+  #run() {
+    this.dispose();
     effectStack.push(this);
     try {
       this.effect();
@@ -101,8 +113,8 @@ class LafElement {
   // calls nested LafElements recursively
   render() {
     const el =
-      tag === null
-        ? document.createDocumentFragment
+      this.tag === null
+        ? document.createDocumentFragment()
         : document.createElement(this.tag);
 
     // handle props
@@ -135,9 +147,29 @@ class LafElement {
       if (read instanceof LafElement) {
         el.append(read.render());
       } else if (read) {
-        const text = document.createTextNode("");
-        new Effect(() => (text.data = read()));
-        el.append(text);
+        // const text = document.createTextNode("");
+        // new Effect(() => (text.data = read()));
+        // el.append(text);
+        const anchor = document.createComment("");
+        el.append(anchor);
+        let current = [];
+
+        new Effect(() => {
+          const result = read();
+          let node = null;
+          if (result instanceof LafElement) node = result.render();
+          else if (result != null && result !== false)
+            node = document.createTextNode(String(result));
+
+          current.forEach((n) => n.remove());
+          current =
+            node instanceof DocumentFragment
+              ? [...node.childNodes]
+              : node
+                ? [node]
+                : [];
+          anchor.after(...current);
+        });
       } else if (child == null || child === false) {
         continue;
       } else {
@@ -216,5 +248,27 @@ function TipTap() {
     ),
   );
 }
+
+function Details() {
+  const counter = new Reducer((v) => !v, false);
+
+  return h(
+    null,
+    {},
+    h(
+      "button",
+      {
+        onClick: () => {
+          counter.dispatch();
+          console.log(counter.peek());
+        },
+      },
+      () => (counter.get() ? "close details" : "open details"),
+    ),
+    () => (counter.get() ? h("p", {}, "some details here") : null),
+  );
+}
+
+mount(Details(), document.body);
 
 // document.body.append(Counter(), CounterRed(), Checkbox(), TipTap());
