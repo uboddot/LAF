@@ -23,6 +23,24 @@ class State {
   }
 }
 
+class Reducer extends State {
+  #reducer;
+
+  constructor(reducer, value) {
+    super(value);
+    this.#reducer = reducer;
+  }
+
+  dispatch = () => {
+    super.set(this.#reducer(this.value));
+  };
+
+  // @Override
+  set = () => {
+    throw new Error("use dispatch on Reducer");
+  };
+}
+
 class Effect {
   constructor(effect) {
     this.effect = effect;
@@ -99,4 +117,16 @@ function Counter() {
   ).render();
 }
 
-document.body.append(Counter());
+function CounterRed() {
+  const state = new Reducer((value) => ++value, 2);
+
+  return new LafElement(
+    "button",
+    { onClick: () => state.dispatch() },
+    "Click ",
+    state,
+    " times",
+  ).render();
+}
+
+document.body.append(Counter(), CounterRed());
