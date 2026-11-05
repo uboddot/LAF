@@ -104,10 +104,21 @@ class LafElement {
   }
 
   static #reader(v) {
-    if (v instanceof LafElement) return v;
     if (v instanceof State) return () => v.get();
     if (typeof v === "function") return v;
     return null;
+  }
+
+  static #toNodes(value) {
+    if (value == null || value === false) return [];
+    if (Array.isArray(value))
+      return value.flatMap((v) => LafElement.#toNodes(v));
+    if (value instanceof LafElement) {
+      const node = value.render();
+      return node instanceof DocumentFragment ? [...node.childNodes] : [node];
+    }
+    if (value instanceof Node) return [value];
+    return [document.createTextNode(String(value))];
   }
 
   // calls nested LafElements recursively
@@ -144,36 +155,20 @@ class LafElement {
     // handle children
     for (const child of this.children) {
       const read = LafElement.#reader(child);
-      if (read instanceof LafElement) {
-        el.append(read.render());
-      } else if (read) {
-        // const text = document.createTextNode("");
-        // new Effect(() => (text.data = read()));
-        // el.append(text);
+
+      if (read) {
         const anchor = document.createComment("");
         el.append(anchor);
         let current = [];
 
         new Effect(() => {
-          const result = read();
-          let node = null;
-          if (result instanceof LafElement) node = result.render();
-          else if (result != null && result !== false)
-            node = document.createTextNode(String(result));
-
+          const next = LafElement.#toNodes(read());
           current.forEach((n) => n.remove());
-          current =
-            node instanceof DocumentFragment
-              ? [...node.childNodes]
-              : node
-                ? [node]
-                : [];
-          anchor.after(...current);
+          anchor.after(...next);
+          current = next;
         });
-      } else if (child == null || child === false) {
-        continue;
       } else {
-        el.append(child);
+        el.append(...LafElement.#toNodes(child));
       }
     }
 
@@ -252,6 +247,8 @@ function TipTap() {
 function Details() {
   const counter = new Reducer((v) => !v, false);
 
+  let items = ["detail one", "detail two"];
+
   return h(
     null,
     {},
@@ -262,7 +259,8 @@ function Details() {
       },
       () => (counter.get() ? "close details" : "open details"),
     ),
-    () => (counter.get() ? h("p", {}, "some details here") : null),
+    // () => (counter.get() ? h("p", {}, "some details here") : null),
+    () => (counter.get() ? items.map((i) => h("div", {}, i)) : null),
   );
 }
 
