@@ -78,6 +78,7 @@ class LafElement {
     return null;
   }
 
+  // calls nested LafElements recursively
   render() {
     const el = document.createElement(this.tag);
 
@@ -122,6 +123,12 @@ class LafElement {
     return el;
   }
 }
+
+function mount(component, root) {
+  root.append(component.render());
+}
+
+mount(TipTap(), document.body);
 
 function Counter() {
   const state = new State(0);
@@ -179,7 +186,7 @@ function TipTap() {
       { onClick: () => counter.set(counter.get() + 1) },
       "+",
     ),
-  ).render();
+  );
 }
 
-document.body.append(Counter(), CounterRed(), Checkbox(), TipTap());
+// document.body.append(Counter(), CounterRed(), Checkbox(), TipTap());
