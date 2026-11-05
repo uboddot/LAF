@@ -20,6 +20,7 @@ class State {
   }
 
   set(nextValue) {
+    if (Object.is(this.#value, nextValue)) return;
     this.#value = nextValue;
     [...this.#subs].forEach((effect) => effect.notify());
   }
