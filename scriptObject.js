@@ -78,6 +78,12 @@ class Effect {
   }
 }
 
+/**
+ *
+ * --------
+ * @param {String} tag e.g. 'button', 'div'. If null a documentFragment is added (and hence props ignored). Use tag = null, if wrapper needed that doesnt get in the way for example in flex layout.
+ * @returns {Node} A node representation, that can be rendered.
+ */
 class LafElement {
   constructor(tag, props, ...children) {
     this.tag = tag;
@@ -94,27 +100,32 @@ class LafElement {
 
   // calls nested LafElements recursively
   render() {
-    const el = document.createElement(this.tag);
+    const el =
+      tag === null
+        ? document.createDocumentFragment
+        : document.createElement(this.tag);
 
     // handle props
-    for (const [k, v] of Object.entries(this.props)) {
-      const read = LafElement.#reader(v);
+    if (this.tag != null) {
+      for (const [k, v] of Object.entries(this.props)) {
+        const read = LafElement.#reader(v);
 
-      const assign = (value) => {
-        if (k in el) {
-          el[k] = value;
-        } // DOM property: checked, value, disabled, ...
-        else {
-          el.setAttribute(k, value);
-        } // plain attribute: class, aria-*, data-*, ...
-      };
+        const assign = (value) => {
+          if (k in el) {
+            el[k] = value;
+          } // DOM property: checked, value, disabled, ...
+          else {
+            el.setAttribute(k, value);
+          } // plain attribute: class, aria-*, data-*, ...
+        };
 
-      if (k.startsWith("on")) {
-        el.addEventListener(k.slice(2).toLowerCase(), v);
-      } else if (read) {
-        new Effect(() => assign(read()));
-      } else {
-        assign(v);
+        if (k.startsWith("on")) {
+          el.addEventListener(k.slice(2).toLowerCase(), v);
+        } else if (read) {
+          new Effect(() => assign(read()));
+        } else {
+          assign(v);
+        }
       }
     }
 
