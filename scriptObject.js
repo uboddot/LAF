@@ -4,22 +4,27 @@
 let effectStack = [];
 
 class State {
+  #value;
+  #subs = new Set();
   constructor(value) {
-    this.value = value;
-    this.subs = new Set();
+    this.#value = value;
   }
 
   get() {
     if (effectStack.length > 0) {
       const currentEffect = effectStack.at(-1);
-      this.subs.add(currentEffect);
+      this.#subs.add(currentEffect);
     }
-    return this.value;
+    return this.#value;
   }
 
   set(nextValue) {
-    this.value = nextValue;
-    [...this.subs].forEach((effect) => effect.notify());
+    this.#value = nextValue;
+    [...this.#subs].forEach((effect) => effect.notify());
+  }
+
+  peek() {
+    return this.#value;
   }
 }
 
@@ -32,7 +37,7 @@ class Reducer extends State {
   }
 
   dispatch = () => {
-    super.set(this.#reducer(this.value));
+    super.set(this.#reducer(this.peek()));
   };
 
   // @Override
@@ -79,12 +84,22 @@ class LafElement {
     // handle props
     for (const [k, v] of Object.entries(this.props)) {
       const read = LafElement.#reader(v);
+
+      const assign = (value) => {
+        if (k in el) {
+          el[k] = value;
+        } // DOM property: checked, value, disabled, ...
+        else {
+          el.setAttribute(k, value);
+        } // plain attribute: class, aria-*, data-*, ...
+      };
+
       if (k.startsWith("on")) {
         el.addEventListener(k.slice(2).toLowerCase(), v);
       } else if (read) {
-        new Effect(() => el.setAttribute(k, read()));
+        new Effect(() => assign(read()));
       } else {
-        el.setAttribute(k, v);
+        assign(v);
       }
     }
 
@@ -97,6 +112,8 @@ class LafElement {
         const text = document.createTextNode("");
         new Effect(() => (text.data = read()));
         el.append(text);
+      } else if (child == null || child === false) {
+        continue;
       } else {
         el.append(child);
       }
