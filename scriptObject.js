@@ -258,10 +258,7 @@ function Details() {
     h(
       "button",
       {
-        onClick: () => {
-          counter.dispatch();
-          console.log(counter.peek());
-        },
+        onClick: () => counter.dispatch(),
       },
       () => (counter.get() ? "close details" : "open details"),
     ),
