@@ -14,6 +14,7 @@ class State {
     if (effectStack.length > 0) {
       const currentEffect = effectStack.at(-1);
       this.#subs.add(currentEffect);
+      currentEffect.track(this);
     }
     return this.#value;
   }
@@ -25,6 +26,10 @@ class State {
 
   peek() {
     return this.#value;
+  }
+
+  unsubscribe(effect) {
+    this.#subs.delete(effect);
   }
 }
 
@@ -47,6 +52,8 @@ class Reducer extends State {
 }
 
 class Effect {
+  #debs = new Set();
+
   constructor(effect) {
     this.effect = effect;
     this.#run();
@@ -54,7 +61,13 @@ class Effect {
 
   notify = () => this.#run();
 
+  track(state) {
+    this.#debs.add(state);
+  }
+
   #run() {
+    this.#debs.forEach((state) => state.unsubscribe(this));
+    this.#debs.clear();
     effectStack.push(this);
     try {
       this.effect();
@@ -123,6 +136,9 @@ class LafElement {
     return el;
   }
 }
+
+// helper
+const h = (tag, props, ...children) => new LafElement(tag, props, ...children);
 
 function mount(component, root) {
   root.append(component.render());
