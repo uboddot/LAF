@@ -3,6 +3,25 @@
  */
 let effectStack = [];
 
+let owner = null;
+
+class Owner {
+  contexts = new Map();
+  constructor(parent) {
+    this.parent = parent;
+  }
+}
+
+function withOwner(o, fn) {
+  let prev = owner;
+  owner = o;
+  try {
+    return fn();
+  } finally {
+    owner = prev;
+  }
+}
+
 class State {
   #value;
   #subs = new Set();
@@ -55,6 +74,7 @@ class Reducer extends State {
 class Effect {
   #debs = new Set();
   #children = new Set();
+  #owner = owner;
 
   constructor(effect) {
     this.effect = effect;
@@ -63,7 +83,7 @@ class Effect {
   }
 
   addChild(effect) {
-    this.#children.add(this);
+    this.#children.add(effect);
   }
 
   notify = () => this.#run();
@@ -83,7 +103,7 @@ class Effect {
     this.dispose();
     effectStack.push(this);
     try {
-      this.effect();
+      withOwner(this.#owner, () => this.effect());
     } finally {
       effectStack.pop();
     }
@@ -123,6 +143,12 @@ class LafElement {
 
   // calls nested LafElements recursively
   render() {
+    if (typeof this.tag === "function") {
+      return withOwner(new Owner(owner), () =>
+        this.tag(this.props, ...this.children).render(),
+      );
+    }
+
     const el =
       this.tag === null
         ? document.createDocumentFragment()
@@ -179,11 +205,29 @@ class LafElement {
 // helper
 const h = (tag, props, ...children) => new LafElement(tag, props, ...children);
 
+class Context {
+  constructor(defaultValue) {
+    this.defaultValue = defaultValue;
+  }
+
+  use() {
+    for (let o = owner; o; o = o.parent) {
+      if (o.contexts.has(this)) return o.contexts.get(this);
+    }
+    return this.defaultValue;
+  }
+}
+
+function Provider({ context, value }, ...children) {
+  owner.contexts.set(context, value);
+  return h(null, null, ...children);
+}
+
 function mount(component, root) {
   root.append(component.render());
 }
 
-mount(TipTap(), document.body);
+// mount(TipTap(), document.body);
 
 function Counter() {
   const state = new State(0);
@@ -194,7 +238,7 @@ function Counter() {
     "Clicked ",
     state,
     " times",
-  ).render();
+  );
 }
 
 function CounterRed() {
@@ -206,7 +250,7 @@ function CounterRed() {
     "Click ",
     state,
     " times",
-  ).render();
+  );
 }
 
 function Checkbox() {
@@ -221,11 +265,13 @@ function Checkbox() {
       onChange: () => state.dispatch(),
     }),
     () => (state.get() ? "checked" : "unchecked"),
-  ).render();
+  );
 }
 
+mount(Counter(), document.body);
+
 function TipTap() {
-  const counter = new State(0);
+  const counter = CountContext.use();
 
   return new LafElement(
     "div",
@@ -245,25 +291,35 @@ function TipTap() {
 }
 
 function Details() {
-  const counter = new Reducer((v) => !v, false);
+  const checkState = new Reducer((v) => !v, false);
+  const count = CountContext.use();
 
-  let items = ["detail one", "detail two"];
+  let items = [];
+  for (let i = 0; i < 20; i++) {
+    items.push("detail number " + i);
+  }
 
   return h(
     null,
     {},
-    h(
-      "button",
-      {
-        onClick: () => counter.dispatch(),
-      },
-      () => (counter.get() ? "close details" : "open details"),
+    h("button", { onClick: () => checkState.dispatch() }, () =>
+      checkState.get() ? "close details" : "open details",
     ),
-    // () => (counter.get() ? h("p", {}, "some details here") : null),
-    () => (counter.get() ? items.map((i) => h("div", {}, i)) : null),
+    () =>
+      checkState.get()
+        ? items.slice(0, count.get()).map((i) => h("div", {}, i))
+        : null,
   );
 }
 
-mount(Details(), document.body);
+const CountContext = new Context(new State(0));
 
-// document.body.append(Counter(), CounterRed(), Checkbox(), TipTap());
+function TipTapDetails() {
+  return h(
+    Provider,
+    { context: CountContext, value: new State(0) },
+    h(TipTap),
+    h(Details),
+  );
+}
+mount(h(TipTapDetails), document.body);
