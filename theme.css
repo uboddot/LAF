@@ -1,0 +1,35 @@
+:root {
+  /* colors */
+  --color-primary: rgb(
+    15,
+    20,
+    69
+  ); /* main brand color, for most important actions */
+  --color-secondary: rgb(
+    40,
+    50,
+    120
+  ); /* second brand color, for less important actions */
+  --color-accent: aquamarine; /* highlights, stand out */
+  --color-background: rgb(95, 95, 152);
+  --color-surface: rgb(25, 32, 90);
+  --color-border: pink;
+
+  --color-text: beige;
+  --color-text-muted: rgb(190, 190, 170);
+  --color-on-primary: white;
+
+  --color-success: green;
+  --color-warning: yellow;
+  --color-danger: red;
+  --color-info: rgb(191, 191, 116);
+
+  /* spacing */
+  --space-s: 0.5rem;
+  --space-m: 1rem;
+  --space-l: 2rem;
+
+  /* shape and type */
+  --radius: 0.5rem;
+  --font: system-ui, sans-serif;
+}
