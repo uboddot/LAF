@@ -13,6 +13,8 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 ## [Unreleased]
 
+## [v0.0.3] - 2026-11-09
+
 ### Added
 
 - `create-laf update` prints the changelog entries between the old and the new version (or the rolled-back entries when downgrading).
@@ -46,7 +48,8 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 - `Context` / `Provider` for passing values down the component tree.
 - `create-laf` CLI: `npm create laf <dir>`, `npx create-laf update [ref]`, `npx create-laf versions`.
 
-[Unreleased]: https://github.com/uboddot/LAF/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/uboddot/LAF/compare/v0.0.3...HEAD
+[v0.0.3]: https://github.com/uboddot/LAF/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/uboddot/LAF/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/uboddot/LAF/compare/v0.0.0...v0.0.1
 [v0.0.0]: https://github.com/uboddot/LAF/releases/tag/v0.0.0
