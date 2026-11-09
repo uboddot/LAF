@@ -1,0 +1,20 @@
+{
+  "name": "create-laf",
+  "version": "0.1.0",
+  "description": "Create and update projects using the LAF frontend framework",
+  "type": "module",
+  "bin": {
+    "create-laf": "index.js"
+  },
+  "files": [
+    "*.js"
+  ],
+  "engines": {
+    "node": ">=18.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uboddot/LAF.git",
+    "directory": "cli"
+  }
+}
