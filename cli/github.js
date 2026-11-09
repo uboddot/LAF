@@ -13,9 +13,9 @@ async function getJSON(url) {
   return res.json();
 }
 
-const SEMVER = /^v?(\d+)\.(\d+)\.(\d+)$/;
+export const SEMVER = /^v?(\d+)\.(\d+)\.(\d+)$/;
 
-function compareSemver(a, b) {
+export function compareSemver(a, b) {
   const pa = a.match(SEMVER).slice(1).map(Number);
   const pb = b.match(SEMVER).slice(1).map(Number);
   for (let i = 0; i < 3; i++) if (pa[i] !== pb[i]) return pa[i] - pb[i];

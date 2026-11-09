@@ -5,6 +5,7 @@ import crypto from "node:crypto";
 import { parseArgs } from "node:util";
 import { listVersions, resolveLatest, download } from "./github.js";
 import { untar } from "./tar.js";
+import { changesBetween } from "./changelog.js";
 
 const DEFAULT_REPO = "uboddot/LAF";
 const CONFIG = "laf.json";
@@ -54,7 +55,12 @@ async function fetchRelease(source, ref) {
 
   const laf = pick("laf");
   if (!laf.size) fail(`Version "${ref}" contains no laf/ folder`);
-  return { ref, commit, laf, template: pick("template") };
+
+  // Ship the changelog inside laf/ so every project has it locally.
+  const changelog = files.get("CHANGELOG.md");
+  if (changelog) laf.set("CHANGELOG.md", changelog);
+
+  return { ref, commit, laf, template: pick("template"), changelog };
 }
 
 function writeFiles(dir, files) {
@@ -150,6 +156,18 @@ async function update(ref) {
   writeFiles(lafDir, release.laf);
   writeConfig(root, source, release);
   console.log(`Updated LAF ${config.version} -> ${release.ref}.`);
+  printChanges(release.changelog, config.version, release.ref);
+}
+
+function printChanges(changelog, from, to) {
+  if (!changelog) return;
+  const changes = changesBetween(changelog.toString("utf8"), from, to);
+  if (!changes?.sections.length) {
+    console.log("See laf/CHANGELOG.md for what changed.");
+    return;
+  }
+  console.log(changes.rolledBack ? "\nRolled back:\n" : "\nWhat changed:\n");
+  console.log(changes.sections.join("\n\n"));
 }
 
 async function versions() {
