@@ -1,16 +1,18 @@
-import { h, mount, State } from "./laf/index.js";
+import { h, mount, Provider, State } from "./laf/index.js";
+import { CountContext } from "./contexts.js";
+import { TipTap } from "./components/TipTap.js";
+import { Details } from "./components/Details.js";
 
 function App() {
-  const count = new State(0);
-
   return h(
-    "main",
+    null,
     {},
-    h("h1", {}, "Hello LAF"),
+    h("div", {}, h("h1", {}, "Welcome to LAF")),
     h(
-      "button",
-      { onclick: () => count.set(count.peek() + 1) },
-      () => `Clicked ${count.get()} times`,
+      Provider,
+      { context: CountContext, value: new State(0) },
+      h(TipTap),
+      h(Details),
     ),
   );
 }
