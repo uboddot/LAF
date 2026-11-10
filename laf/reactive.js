@@ -27,8 +27,11 @@ function withOwner(o, fn) {
 class State {
   #value;
   #subs = new Set();
-  constructor(value) {
+  #renderFn;
+
+  constructor(value, renderFn) {
     this.#value = value;
+    this.#renderFn = renderFn;
   }
 
   get() {
@@ -52,6 +55,10 @@ class State {
 
   unsubscribe(effect) {
     this.#subs.delete(effect);
+  }
+
+  render() {
+    return this.#renderFn ? this.#renderFn(this.get()) : this.get();
   }
 }
 
@@ -77,9 +84,10 @@ class Effect {
   #debs = new Set();
   #children = new Set();
   #owner = owner;
+  #effectFn;
 
-  constructor(effect) {
-    this.effect = effect;
+  constructor(effectFn) {
+    this.#effectFn = effectFn;
     effectStack.at(-1)?.addChild(this);
     this.#run();
   }
@@ -105,7 +113,7 @@ class Effect {
     this.dispose();
     effectStack.push(this);
     try {
-      withOwner(this.#owner, () => this.effect());
+      withOwner(this.#owner, () => this.#effectFn());
     } finally {
       effectStack.pop();
     }

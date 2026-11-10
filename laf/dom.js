@@ -16,7 +16,7 @@ class LafElement {
   }
 
   static #reader(v) {
-    if (v instanceof State) return () => v.get();
+    if (v instanceof State) return () => v.render();
     if (typeof v === "function") return v;
     return null;
   }

@@ -13,6 +13,16 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 ## [Unreleased]
 
+### Added
+
+- A `State` can now be initialized with a custom render function, that transforms the output of get() before returning. If no function is provided, render will call get(). E.g.:
+
+```
+point = new State({ x: 0, y: 1 }, (o) => o.x);
+```
+
+- Refactor in `Effect` class to make it more readable.
+
 ## [v0.0.3] - 2026-11-09
 
 ### Added
