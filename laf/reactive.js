@@ -66,7 +66,7 @@ class Reducer extends State {
   #reducerFn;
 
   constructor(reducerFn, value, renderFn) {
-    super(value, reducerFn);
+    super(value, renderFn);
     this.#reducerFn = reducerFn;
   }
 

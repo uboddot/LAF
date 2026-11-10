@@ -13,6 +13,10 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 ## [Unreleased]
 
+### Fix
+
+- renderFn in `Reducer`.
+
 ### Added
 
 ## [v0.0.4] - 2026-11-10
