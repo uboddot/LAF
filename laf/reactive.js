@@ -63,15 +63,15 @@ class State {
 }
 
 class Reducer extends State {
-  #reducer;
+  #reducerFn;
 
-  constructor(reducer, value) {
-    super(value);
-    this.#reducer = reducer;
+  constructor(reducerFn, value, renderFn) {
+    super(value, reducerFn);
+    this.#reducerFn = reducerFn;
   }
 
   dispatch = () => {
-    super.set(this.#reducer(this.peek()));
+    super.set(this.#reducerFn(this.peek()));
   };
 
   // @Override
