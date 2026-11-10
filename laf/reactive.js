@@ -103,8 +103,15 @@ class Effect {
     this.#debs.add(state);
   }
 
+  setDisposed(flag) {
+    this.#disposed = flag;
+  }
+
   dispose() {
-    this.#children.forEach((child) => child.dispose());
+    this.#children.forEach((child) => {
+      child.setDisposed(true);
+      child.dispose();
+    });
     this.#children.clear();
     this.#debs.forEach((state) => state.unsubscribe(this));
     this.#debs.clear();
