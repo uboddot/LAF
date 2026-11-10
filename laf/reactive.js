@@ -81,6 +81,7 @@ class Reducer extends State {
 }
 
 class Effect {
+  #disposed = false;
   #debs = new Set();
   #children = new Set();
   #owner = owner;
@@ -110,6 +111,7 @@ class Effect {
   }
 
   #run() {
+    if (this.#disposed) return;
     this.dispose();
     effectStack.push(this);
     try {

@@ -15,6 +15,12 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 ### Added
 
+## [v0.0.4] - 2026-11-10
+
+### Added
+
+- Fix a bug, where child effects dont get disposed correctly.
+
 - A `State` can now be initialized with a custom render function, that transforms the output of get() before returning. If no function is provided, render will call get(). E.g.:
 
 ```
@@ -58,7 +64,8 @@ point = new State({ x: 0, y: 1 }, (o) => o.x);
 - `Context` / `Provider` for passing values down the component tree.
 - `create-laf` CLI: `npm create laf <dir>`, `npx create-laf update [ref]`, `npx create-laf versions`.
 
-[Unreleased]: https://github.com/uboddot/LAF/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/uboddot/LAF/compare/v0.0.4...HEAD
+[v0.0.4]: https://github.com/uboddot/LAF/compare/v0.0.3...v0.0.4
 [v0.0.3]: https://github.com/uboddot/LAF/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/uboddot/LAF/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/uboddot/LAF/compare/v0.0.0...v0.0.1
