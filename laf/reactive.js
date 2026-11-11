@@ -89,28 +89,33 @@ class Effect {
 
   constructor(effectFn) {
     this.#effectFn = effectFn;
-    effectStack.at(-1)?.addChild(this);
+    const parent = effectStack.at(-1);
+    if (parent) parent.#addChild(this);
     this.#run();
   }
 
-  addChild(effect) {
+  #addChild(effect) {
     this.#children.add(effect);
   }
 
-  notify = () => this.#run();
+  notify = () => {
+    if (this.#disposed) return;
+    if (effectStack.includes(this)) return;
+    this.#run();
+  };
 
   track(state) {
     this.#debs.add(state);
   }
 
-  setDisposed(flag) {
+  #setDisposed(flag) {
     this.#disposed = flag;
   }
 
-  dispose() {
+  #dispose() {
     this.#children.forEach((child) => {
-      child.setDisposed(true);
-      child.dispose();
+      child.#setDisposed(true);
+      child.#dispose();
     });
     this.#children.clear();
     this.#debs.forEach((state) => state.unsubscribe(this));
@@ -118,8 +123,7 @@ class Effect {
   }
 
   #run() {
-    if (this.#disposed) return;
-    this.dispose();
+    this.#dispose();
     effectStack.push(this);
     try {
       withOwner(this.#owner, () => this.#effectFn());
