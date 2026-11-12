@@ -1,3 +1,7 @@
+/**
+ * DOM rendering
+ * @module dom
+ */
 import { Effect, Owner, State, owner, withOwner } from "./reactive.js";
 
 export { h, mount };

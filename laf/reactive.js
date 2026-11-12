@@ -1,3 +1,8 @@
+/**
+ * Reactive core: State and Effect
+ * @module reactive
+ */
+
 export { Owner, owner, withOwner, State, Reducer, Effect };
 
 /**
@@ -97,12 +102,13 @@ class State {
 }
 
 /**
- * A State with a predefined update functionality. Update value by calling dispatch method.
+ * A {@link State} with a predefined update functionality. Update value by calling dispatch method.
  *
  * @example
  * const toggle = new Reducer((v) => !v, true, (v) => {return v ? "on" : "of"});
  * toggle.dispatch(); // to toggle between true <-> false
  *
+ * @extends State
  * @example
  * const counter = new Reducer((v) => v+1, 0);
  */
@@ -122,7 +128,10 @@ class Reducer extends State {
     super.update(this.#reducerFn(this.peek()));
   };
 
-  // @Override
+  /**
+   * @override
+   * @throws {Error} Always. Use {@link Reducer#dispatch} instead.
+   */
   update = () => {
     throw new Error("use dispatch on Reducer, not the set method");
   };
