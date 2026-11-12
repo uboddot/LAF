@@ -4,16 +4,16 @@ import { Effect } from "../../laf/reactive.js";
 
 export function stateContract(name, make) {
   describe(`${name}: shared State behavior`, () => {
-    test("get/peek return the current value", () => {
+    test("subscribe/peek return the current value", () => {
       // given when
       const { s, update } = make(1);
       // then
-      assert.equal(s.get(), 1);
+      assert.equal(s.subscribe(), 1);
       assert.equal(s.peek(), 1);
       // when
       update(2);
       // then
-      assert.equal(s.get(), 2);
+      assert.equal(s.subscribe(), 2);
       assert.equal(s.peek(), 2);
     });
 
@@ -21,7 +21,7 @@ export function stateContract(name, make) {
       const { s, update } = make(1);
       let seen;
       new Effect(() => {
-        seen = s.get();
+        seen = s.subscribe();
       });
       update(2);
       assert.equal(seen, 2);
@@ -31,7 +31,7 @@ export function stateContract(name, make) {
       const { s, update } = make(1);
       let runs = 0;
       new Effect(() => {
-        s.get();
+        s.subscribe();
         runs++;
       });
       update(1);

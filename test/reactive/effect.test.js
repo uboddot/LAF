@@ -11,7 +11,7 @@ describe("Effect with one observed state", () => {
     state = new State(1);
     cnt = 0;
     new Effect(() => {
-      state.get();
+      state.subscribe();
       cnt++;
     });
   });
@@ -21,12 +21,12 @@ describe("Effect with one observed state", () => {
   });
 
   test("re-runs when observed state changes", () => {
-    state.set(0);
+    state.update(0);
     assert.equal(cnt, 2);
   });
 
   test("does not re-run for an Object.is-equal value", () => {
-    state.set(1);
+    state.update(1);
     assert.equal(cnt, 1);
   });
 });
@@ -36,7 +36,7 @@ describe("circular effects", () => {
     // given when
     const state = new State(1);
     const effect = new Effect(() => {
-      state.set(state.get() + 1);
+      state.update(state.subscribe() + 1);
     });
 
     // then
@@ -48,14 +48,14 @@ describe("circular effects", () => {
     const a = new State(1);
     const b = new State(1);
     const ef1 = new Effect(() => {
-      b.set(a.get() + 1);
+      b.update(a.subscribe() + 1);
     });
     const ef2 = new Effect(() => {
-      a.set(b.get() + 1);
-    }); // effect stack now looks like: [ef1, ef2]
+      a.update(b.subscribe() + 1);
+    });
 
     // when
-    a.set(2);
+    a.update(2); // duringt effect stack looks like: [ef1, ef2] and ef1 does not get pushed again to the stack, breaking the cycle
 
     // then
     assert.equal(b.peek(), 3);
@@ -71,11 +71,11 @@ describe("nested effects", () => {
     let cnt_effect_1 = 0;
     let cnt_effect_2 = 0;
     const ef1 = new Effect(() => {
-      a.get();
+      a.subscribe();
       cnt_effect_1++;
       const ef2 = new Effect(() => {
-        a.get();
-        b.get();
+        a.subscribe();
+        b.subscribe();
         cnt_effect_2++;
       });
     });
@@ -91,14 +91,14 @@ describe("nested effects", () => {
     assert.equal(cnt_effect_2, 1);
 
     // when
-    a.set(2);
+    a.update(2);
 
     // then
     assert.equal(cnt_effect_1, 2);
     assert.equal(cnt_effect_2, 2);
 
     // when
-    b.set(2);
+    b.update(2);
     assert.equal(cnt_effect_1, 2);
     assert.equal(cnt_effect_2, 3);
   });
@@ -111,13 +111,13 @@ describe("nested effects", () => {
     let cnt_effect_2 = 0;
     let cnt_effect_3 = 0;
     const ef1 = new Effect(() => {
-      a.get();
+      a.subscribe();
       cnt_effect_1++;
       const ef2 = new Effect(() => {
-        a.get();
+        a.subscribe();
         cnt_effect_2++;
         const ef2 = new Effect(() => {
-          a.get();
+          a.subscribe();
           cnt_effect_3++;
         });
       });
@@ -134,7 +134,7 @@ describe("nested effects", () => {
     // then
 
     // when
-    a.set(2);
+    a.update(2);
 
     // then
     assert.equal(cnt_effect_1, 2);
@@ -150,11 +150,11 @@ describe("nested effects", () => {
     let cnt_effect_2 = 0;
     const ef1 = new Effect(() => {
       const ef2 = new Effect(() => {
-        a.get();
-        b.get();
+        a.subscribe();
+        b.subscribe();
         cnt_effect_2++;
       });
-      a.get();
+      a.subscribe();
       cnt_effect_1++;
     });
 
@@ -170,7 +170,7 @@ describe("nested effects", () => {
     let cnt_effect_2 = 0;
     const ef1 = new Effect(() => {
       const ef2 = new Effect(() => {
-        a.get();
+        a.subscribe();
         cnt_effect_2++;
       });
       cnt_effect_1++;
@@ -181,7 +181,7 @@ describe("nested effects", () => {
     assert.equal(cnt_effect_2, 1);
 
     // when
-    a.set(2);
+    a.update(2);
     assert.equal(cnt_effect_1, 1);
     assert.equal(cnt_effect_2, 2);
   });
@@ -193,11 +193,11 @@ describe("nested effects", () => {
     let cnt_effect_1 = 0;
     let cnt_effect_2 = 0;
     const ef1 = new Effect(() => {
-      a.get();
+      a.subscribe();
       cnt_effect_1++;
       if (a.peek() === 1) {
         const ef2 = new Effect(() => {
-          b.get();
+          b.subscribe();
           cnt_effect_2++;
         });
       }
@@ -208,14 +208,14 @@ describe("nested effects", () => {
     assert.equal(cnt_effect_2, 1);
 
     // when
-    a.set(2);
+    a.update(2);
 
     // then
     assert.equal(cnt_effect_1, 2);
     assert.equal(cnt_effect_2, 1);
 
     // when
-    b.set(2);
+    b.update(2);
 
     // then
     assert.equal(cnt_effect_1, 2);
