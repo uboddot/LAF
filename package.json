@@ -4,7 +4,8 @@
   "type": "module",
   "homepage": "https://uboddot.github.io/LAF/",
   "scripts": {
-    "docs": "npx --yes jsdoc@4.0.5 -c jsdoc.json"
+    "docs": "npx --yes jsdoc@4.0.5 -c jsdoc.json",
+    "test": "node --test \"test/**/*.test.js\""
   },
   "description": "LAF frontend framework. Lets `npx github:uboddot/LAF <dir>` run the CLI without npm publishing.",
   "bin": {
