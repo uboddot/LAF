@@ -2,6 +2,8 @@
 
 A small reactive frontend framework with no build step. Projects use plain ES modules and import the framework from a local `laf/` folder.
 
+**API docs:** https://uboddot.github.io/LAF/ (generated from the JSDoc in `laf/`; build locally with `npm run docs`, output in `docs-out/`)
+
 ## Start a new project
 
 ```sh

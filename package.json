@@ -2,6 +2,10 @@
   "name": "laf",
   "private": true,
   "type": "module",
+  "homepage": "https://uboddot.github.io/LAF/",
+  "scripts": {
+    "docs": "npx --yes jsdoc@4.0.5 -c jsdoc.json"
+  },
   "description": "LAF frontend framework. Lets `npx github:uboddot/LAF <dir>` run the CLI without npm publishing.",
   "bin": {
     "create-laf": "cli/index.js"

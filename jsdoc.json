@@ -1,0 +1,13 @@
+{
+  "source": {
+    "include": ["laf"],
+    "includePattern": "[.]js$"
+  },
+  "sourceType": "module",
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "destination": "docs-out",
+    "readme": "README.md",
+    "recurse": true
+  }
+}

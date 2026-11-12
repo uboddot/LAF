@@ -46,7 +46,7 @@ class State {
 
   /**
    * @description To overwrite the default render function.
-   * @type {(any) => any}
+   * @type {function(any): any}
    */
   #renderFn;
 
@@ -109,7 +109,7 @@ class State {
 class Reducer extends State {
   /**
    * @description the function that predife
-   * @type {(any) => any}
+   * @type {function(any): any}
    */
   #reducerFn;
 
@@ -158,12 +158,12 @@ class Effect {
 
   #owner = owner;
 
-  /** @type {() => void} */
+  /** @type {function(): void} */
   #effectFn;
 
   /**
    * Creates the effect, registers it with its parent if present and runs once.
-   * @param {() => void} effectFn - The function to run reactively
+   * @param {function(): void} effectFn - The function to run reactively
    */
   constructor(effectFn) {
     this.#effectFn = effectFn;

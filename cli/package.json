@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "Create and update projects using the LAF frontend framework",
   "type": "module",
+  "homepage": "https://uboddot.github.io/LAF/",
   "bin": {
     "create-laf": "index.js"
   },
