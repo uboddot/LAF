@@ -22,6 +22,7 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 - added test suite for 'Effect'
 - added test suite for 'State'
+- added jsdoc
 
 ### Added
 
