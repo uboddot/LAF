@@ -1,7 +1,7 @@
 export { Owner, owner, withOwner, State, Reducer, Effect };
 
 /**
- * The effect that is currently running
+ * The effects that are currently running
  */
 let effectStack = [];
 

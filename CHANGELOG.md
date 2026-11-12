@@ -16,6 +16,12 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 ### Fix
 
 - renderFn in `Reducer`.
+- prohibit cyclic effect calls.
+
+### Dev
+
+- added test suite for 'Effect'
+- added test suite for 'State'
 
 ### Added
 
