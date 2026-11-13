@@ -6,10 +6,13 @@
 export { Owner, owner, withOwner, State, Reducer, Effect };
 
 /**
- * The effects that are currently running
+ * @description The effects that are currently running
  */
 let effectStack = [];
 
+/**
+ * @description active owner
+ */
 let owner = null;
 
 class Owner {

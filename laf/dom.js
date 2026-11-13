@@ -39,6 +39,7 @@ class LafElement {
 
   // calls nested LafElements recursively
   render() {
+    // catching Components, i.e. App(), Provider() etc.
     if (typeof this.tag === "function") {
       return withOwner(new Owner(owner), () =>
         this.tag(this.props, ...this.children).render(),
