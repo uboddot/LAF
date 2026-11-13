@@ -13,6 +13,8 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 ## [Unreleased]
 
+## [v0.0.5] - 2026-11-13
+
 ### Fix
 
 - renderFn in `Reducer`.
@@ -22,6 +24,7 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 - added test suite for 'Effect'
 - added test suite for 'State'
+- added test suite for Context and Owner functionality
 - added jsdoc
 
 ### Added
@@ -75,7 +78,8 @@ point = new State({ x: 0, y: 1 }, (o) => o.x);
 - `Context` / `Provider` for passing values down the component tree.
 - `create-laf` CLI: `npm create laf <dir>`, `npx create-laf update [ref]`, `npx create-laf versions`.
 
-[Unreleased]: https://github.com/uboddot/LAF/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/uboddot/LAF/compare/v0.0.5...HEAD
+[v0.0.5]: https://github.com/uboddot/LAF/compare/v0.0.4...v0.0.5
 [v0.0.4]: https://github.com/uboddot/LAF/compare/v0.0.3...v0.0.4
 [v0.0.3]: https://github.com/uboddot/LAF/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/uboddot/LAF/compare/v0.0.1...v0.0.2
