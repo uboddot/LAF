@@ -37,7 +37,7 @@ function withOwner(o, fn) {
  *
  * Setting a new state notifies all subscribed Effects.
  *
- * Provides render, subscribe, peek and set function.
+ * Provides render, subscribe, peek and update function.
  */
 class State {
   /**
@@ -136,7 +136,7 @@ class Reducer extends State {
    * @throws {Error} Always. Use {@link Reducer#dispatch} instead.
    */
   update = () => {
-    throw new Error("use dispatch on Reducer, not the set method");
+    throw new Error("use dispatch on Reducer, not the update method");
   };
 }
 
@@ -148,7 +148,7 @@ class Reducer extends State {
  *
  * @example
  * new Effect(() => {
- *  stateInstance.subscribe(); // now this effect is subscribed to stateInstance and reruns if stateInstance changes value through set()/ dispatch() interface.
+ *  stateInstance.subscribe(); // now this effect is subscribed to stateInstance and reruns if stateInstance changes value through update()/ dispatch() interface.
  *  console.log("stateInstance changed");
  * })
  */

@@ -13,6 +13,11 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING**: `State.get()` is renamed to `State.subscribe()` and `State.set()` to `State.update()`. `peek()` is unchanged.
+  Migration: replace `.get()` with `.subscribe()` and `.set(x)` with `.update(x)` on every `State`/`Reducer` in your components. `Map.get`/`Map.set` are not affected.
+
 ## [v0.0.5] - 2026-11-13
 
 ### Fix

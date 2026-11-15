@@ -10,8 +10,16 @@ export function TipTap() {
   return h(
     "div",
     { class: "tiptap" },
-    h("button", { onClick: () => counter.set(counter.get() - 1) }, "-"),
+    h(
+      "button",
+      { onClick: () => counter.update(counter.subscribe() - 1) },
+      "-",
+    ),
     h("div", {}, counter),
-    h("button", { onClick: () => counter.set(counter.get() + 1) }, "+"),
+    h(
+      "button",
+      { onClick: () => counter.update(counter.subscribe() + 1) },
+      "+",
+    ),
   );
 }
