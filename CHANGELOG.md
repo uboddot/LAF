@@ -13,10 +13,20 @@ Breaking changes are marked **BREAKING** and come with a migration note.
 
 ## [Unreleased]
 
+## [v0.1.0] - 2026-11-17
+
 ### Changed
 
 - **BREAKING**: `State.get()` is renamed to `State.subscribe()` and `State.set()` to `State.update()`. `peek()` is unchanged.
   Migration: replace `.get()` with `.subscribe()` and `.set(x)` with `.update(x)` on every `State`/`Reducer` in your components. `Map.get`/`Map.set` are not affected.
+
+### Added
+
+- SVG elements are now created in the SVG namespace, i.e. can now use
+
+```
+h("svg",{width: .., height: ..}, h("line", {x1 ....}))
+```
 
 ## [v0.0.5] - 2026-11-13
 
@@ -83,7 +93,8 @@ point = new State({ x: 0, y: 1 }, (o) => o.x);
 - `Context` / `Provider` for passing values down the component tree.
 - `create-laf` CLI: `npm create laf <dir>`, `npx create-laf update [ref]`, `npx create-laf versions`.
 
-[Unreleased]: https://github.com/uboddot/LAF/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/uboddot/LAF/compare/v0.1.0...HEAD
+[v0.1.0]: https://github.com/uboddot/LAF/compare/v0.0.5...v0.1.0
 [v0.0.5]: https://github.com/uboddot/LAF/compare/v0.0.4...v0.0.5
 [v0.0.4]: https://github.com/uboddot/LAF/compare/v0.0.3...v0.0.4
 [v0.0.3]: https://github.com/uboddot/LAF/compare/v0.0.2...v0.0.3

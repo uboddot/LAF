@@ -6,6 +6,9 @@ import { Effect, Owner, State, owner, withOwner } from "./reactive.js";
 
 export { h, mount };
 
+const SVG_NS = "http://www.w3.org/2000/svg";
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+
 /**
  *
  * --------
@@ -25,12 +28,18 @@ class LafElement {
     return null;
   }
 
-  static #toNodes(value) {
+  /**
+   * Turns child values into DOM nodes.
+   * @param {any} value
+   * @param {string} ns namespace for LafElements created from value
+   * @returns {Node[]}
+   */
+  static #toNodes(value, ns) {
     if (value == null || value === false) return [];
     if (Array.isArray(value))
-      return value.flatMap((v) => LafElement.#toNodes(v));
+      return value.flatMap((v) => LafElement.#toNodes(v, ns));
     if (value instanceof LafElement) {
-      const node = value.render();
+      const node = value.render(ns);
       return node instanceof DocumentFragment ? [...node.childNodes] : [node];
     }
     if (value instanceof Node) return [value];
@@ -38,18 +47,24 @@ class LafElement {
   }
 
   // calls nested LafElements recursively
-  render() {
+  render(ns = HTML_NS) {
+    const myNs = this.tag === "svg" ? SVG_NS : ns; // own namespace: <svg> switches to SVG, otherwise inherit
+
     // catching Components, i.e. App(), Provider() etc.
     if (typeof this.tag === "function") {
       return withOwner(new Owner(owner), () =>
-        this.tag(this.props, ...this.children).render(),
+        this.tag(this.props, ...this.children).render(ns),
       );
     }
 
     const el =
       this.tag === null
         ? document.createDocumentFragment()
-        : document.createElement(this.tag);
+        : myNs === SVG_NS
+          ? document.createElementNS(SVG_NS, this.tag)
+          : document.createElement(this.tag);
+
+    const childNs = this.tag === "foreignObject" ? HTML_NS : myNs;
 
     // handle props
     if (this.tag != null) {
@@ -57,12 +72,15 @@ class LafElement {
         const read = LafElement.#reader(v);
 
         const assign = (value) => {
-          if (k in el) {
+          // SVG name space always sets with Attribute.
+          if (myNs !== SVG_NS && k in el) {
             el[k] = value;
           } // DOM property: checked, value, disabled, ...
-          else {
+          else if (value == null || value === false) {
+            el.removeAttribute(k);
+          } else {
             el.setAttribute(k, value);
-          } // plain attribute: class, aria-*, data-*, ...
+          } // plain attribute: class, aria-*, data-*, ..., svg attr.
         };
 
         if (k.startsWith("on")) {
@@ -85,13 +103,13 @@ class LafElement {
         let current = [];
 
         new Effect(() => {
-          const next = LafElement.#toNodes(read());
+          const next = LafElement.#toNodes(read(), childNs);
           current.forEach((n) => n.remove());
           anchor.after(...next);
           current = next;
         });
       } else {
-        el.append(...LafElement.#toNodes(child));
+        el.append(...LafElement.#toNodes(child, childNs));
       }
     }
 
